@@ -2,9 +2,37 @@ function email_test(input) {
 	return !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(input.value);
 };
 jQuery(document).ready(function() {
-  $('select').select2({
+  jQuery('select').select2({
     minimumResultsForSearch: -1
   });
+  jQuery('#currency').select2({
+    minimumResultsForSearch: -1,
+    templateResult: formatState
+  });
+  if (jQuery('#currency').hasClass("select2-hidden-accessible")) {
+    AddFlags();
+  }
+  jQuery('#currency').on('select2:select', function (e) {
+    AddFlags2()
+  });
+  function AddFlags() {
+    let title = jQuery('#currency').next().find('.select2-selection__rendered').attr('title');
+    jQuery('#currency').next().find('.select2-selection__rendered').append("<span class='" + title + "'></span>");
+  }
+  function AddFlags2() {
+    let title = jQuery('#select2-currency-container').attr('title');
+    jQuery('#currency').next().find('.select2-selection__rendered').append("<span class='" + title + "'></span>");
+  }
+  function formatState (state) {
+    if (!state.id) {
+      return state.text;
+    }
+    var baseUrl = "img/icons/flag-";
+    var $state = $(
+      '<span><img title="' + state.element.value.toLowerCase() + '" src="' + baseUrl + state.element.value.toLowerCase() + '.svg" class="img-flag" /> ' + state.text + '</span>'
+    );
+    return $state;
+  };
   jQuery('#skills').select2({
     placeholder: 'Выберите основные навыки',
     tags: true,
@@ -20,6 +48,11 @@ jQuery(document).ready(function() {
   jQuery(".btn__submit").click(function (e) {
     e.preventDefault();
     form_submit(form);
+  });
+  jQuery(".popup__close").click(function () {
+    $([document.documentElement, document.body]).animate({
+      scrollTop: $("#form").offset().top - 200
+    }, 2000);
   })
 });
 
